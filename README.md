@@ -35,7 +35,7 @@ class Observer(object):
 
 observer = Observer()
 
-subject.thing_register(observer, 'notify')
+subject.thing_register(observer, 'notify')  # method name must be a string
 
 subject.thing = 2  # Observer.notify will report receiving the value
 print subject.thing  # Output will be the value from the preceding line
