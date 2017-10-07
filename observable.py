@@ -11,9 +11,9 @@
         sample.thing = 1
         This results in calling function(1) and someclass.foo(1)
         One can't call sample.thing_register(someclass.foo), because
-        the bound method is ephemeral and goes away immediately.
-        Using the object separate from the method name defers
-        binding the method until needed.
+        the bound method someclass.foo is ephemeral and goes away
+        immediately. Using the object separate from the method name
+        defers binding the method until needed.
 
         The register and unregister @property methods return
         non-data descriptors, which is how we differentiate between
