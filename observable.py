@@ -60,6 +60,9 @@ class Observable(object):
             This also means that there may only be one method per object
             that observes this value.
         """
+        if method is not None:
+            # Get that Attribute error at register time, not later.
+            getattr(observer, method)
         observerdict = self.observers
         try:
             observerdict[obj][observer] = method
