@@ -40,10 +40,7 @@ class Observable(object):
             # Referenced from an uninstantiated class definition. This
             # is how we access the register and unregister properties.
             return self
-        try:
-            return self.value[obj]
-        except KeyError:  # No value has been set.
-            return None
+        return self.value.get(obj, None)
 
     def __set__(self, obj, value):
         self.value[obj] = value
