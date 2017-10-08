@@ -51,7 +51,7 @@ class Observable(object):
         observers = self.observers.get(obj, {})
         for observer, method in observers.items():
             yield observer if method is None else getattr(observer,
-                                                              method)
+                                                          method)
 
     def register_observer(self, obj, observer, method=None):
         """Register an observer.  If method is None, then the observer
