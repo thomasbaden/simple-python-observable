@@ -48,13 +48,9 @@ class Observable(object):
             method(value)
 
     def _observer_methods(self, obj):
-        try:
-            observers = self.observers[obj]
-        except KeyError:
-            pass
-        else:
-            for observer, method in observers.items():
-                yield observer if method is None else getattr(observer,
+        observers = self.observers.get(obj, {})
+        for observer, method in observers.items():
+            yield observer if method is None else getattr(observer,
                                                               method)
 
     def register_observer(self, obj, observer, method=None):
