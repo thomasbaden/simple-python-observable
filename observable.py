@@ -35,12 +35,15 @@ class Observable(object):
         self.observers = WeakKeyDictionary()
         self.value = WeakKeyDictionary()
 
+    def _get_value(self, obj):
+        return self.value.get(obj, None)
+
     def __get__(self, obj, cls):
         if obj is None:
             # Referenced from an uninstantiated class definition. This
             # is how we access the register and unregister properties.
             return self
-        return self.value.get(obj, None)
+        return self._get_value(obj)
 
     def __set__(self, obj, value):
         self.value[obj] = value
