@@ -32,10 +32,13 @@ subject.thing = 1  # No output will be produced
 print subject.thing  # Output will be the value from the preceding line
 
 class Observer(object):
+    def __init__(self, name):
+        self.name = name
     def notify(self, value):
-        print "Observer.notify() called with {value!r}".format(value=value)
+        print "{name} Observer.notify() called with {value!r}".format(
+            name=self.name, value=value)
 
-observer = Observer()
+observer = Observer('first')
 
 subject.thing_register(observer, 'notify')  # method name must be a string
 
