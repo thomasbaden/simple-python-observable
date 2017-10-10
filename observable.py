@@ -26,14 +26,15 @@ from weakref import WeakKeyDictionary
 class Observable(object):
     """An implementation of the Observer design pattern
     """
-    __slots__ = ('observers', 'value')
+    __slots__ = ('notify', 'observers', 'value')
 
-    def __init__(self):
+    def __init__(self, always_notify=False):
         # These two WeakKeyDictionary objects use the instantiated
         # enclosing object as their key.  If the object goes away, so
         # does its item.
         self.observers = WeakKeyDictionary()
         self.value = WeakKeyDictionary()
+        self.notify = always_notify
 
     def _get_value(self, obj):
         return self.value.get(obj, None)
@@ -46,9 +47,12 @@ class Observable(object):
         return self._get_value(obj)
 
     def __set__(self, obj, value):
+        old_value = self._get_value(obj)
         self.value[obj] = value
-        for method in self._observer_methods(obj):  # call the observers
-            method(value)
+        if self.notify or value != old_value:
+            # notify the observers
+            for method in self._observer_methods(obj):
+                method(value)
 
     def _observer_methods(self, obj):
         observers = self.observers.get(obj, {})
