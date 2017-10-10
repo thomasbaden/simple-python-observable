@@ -54,6 +54,10 @@ class Observable(object):
             for method in self._observer_methods(obj):
                 method(value)
 
+    @staticmethod
+    def _observator(observer, method):
+        return observer if method is None else getattr(observer, method)
+
     def _get_observers(self, obj):
         return self.observers.get(obj, {})
 
