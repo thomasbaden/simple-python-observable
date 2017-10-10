@@ -2,7 +2,9 @@
 A simple python implementation of the Observer design pattern.
 
 This module provides an Observable data descriptor class, with register
-and unregister attributes.
+and unregister attributes.  This allows one to easily convert an object
+attribute into an Observable without necessitating extensive changes to one's
+program; just treat the Observable as though it were a normal attribute.
 
 Assigning a value to the data descriptor object on instantiated enclosing
 class objects will call all registered observer methods with the value as
