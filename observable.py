@@ -85,10 +85,7 @@ class Observable(object):
     def unregister_observer(self, obj, observer):
         """Unregister an observer.
         """
-        try:
-            self.observers[obj].pop(observer, None)
-        except KeyError:
-            pass
+        self._get_observers(obj).pop(observer, None)
 
     class Registrar(object):  # pylint: disable=too-few-public-methods
         """Registrar abstract base class.  Only for subclassing and DRY.
