@@ -54,8 +54,11 @@ class Observable(object):
             for method in self._observer_methods(obj):
                 method(value)
 
+    def _get_observers(self, obj):
+        return self.observers.get(obj, {})
+
     def _observer_methods(self, obj):
-        observers = self.observers.get(obj, {})
+        observers = self._get_observers(obj)
         for observer, method in observers.items():
             yield observer if method is None else getattr(observer,
                                                           method)
