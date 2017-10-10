@@ -54,15 +54,33 @@ subject.thing_register(observer_function)
 subject.thing = 3
 print subject.thing  # Output will be the value from the preceding line
 
+observer2 = Observer('second')
+
+subject.thing_register(observer2, 'notify')  # method name must be a string
+
+# Observer.notify and observer_function will report receiving the value
+subject.thing = 4
+print subject.thing  # Output will be the value from the preceding line
+
+subject.thing = 4  # Setting the same value will not notify the observers.
+print subject.thing  # Output will be the value from the preceding line
+
 del observer
 
 # observer_function will report receiving the value.  observer no longer
-# exists, and will not be called.
-subject.thing = 4
+# exists, and will not be called.  observer2 still exists, and will report
+# receiving the value
+subject.thing = 5
+print subject.thing  # Output will be the value from the preceding line
+
+subject.thing_unregister(observer2)
+# observer_function will report receiving the value.  observer2 is not
+# registered, and will not be notified
+subject.thing = 6
 print subject.thing  # Output will be the value from the preceding line
 
 subject.thing_unregister(observer_function)
 
-subject.thing = 5  # No output will be produced
+subject.thing = 7  # No output will be produced
 print subject.thing  # Output will be the value from the preceding line
 ```
