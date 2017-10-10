@@ -74,13 +74,8 @@ class Observable(object):
             This also means that there may only be one method per object
             that observes this value.
         """
-        if method is None:
-            if not callable(observer):
-                raise ValueError('observer is not callable')
-        # Get the potential Attribute error at register time, not later.
-        elif not callable(getattr(observer, method)):
-            raise ValueError("observer's .{meth} method is not callable"
-                             .format(meth=method))
+        if not callable(self._observator(observer, method)):
+            raise ValueError('observer is not callable')
         observerdict = self.observers
         try:
             observerdict[obj][observer] = method
