@@ -79,7 +79,7 @@ class Observable(object):
         observerdict = self.observers
         try:
             observerdict[obj][observer] = method
-        except KeyError:
+        except KeyError:  # We need a new WeakKeyDictionary for obj
             observerdict[obj] = WeakKeyDictionary({observer: method})
 
     def unregister_observer(self, obj, observer):
