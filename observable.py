@@ -28,16 +28,20 @@ class Observable(object):
 
     Instantiate with always_notify=True to notify all observers on all
     set operations instead of set operations which change the value.
-    """
-    __slots__ = ('notify', 'observers', 'value')
 
-    def __init__(self, always_notify=False):
+    Instantiate with include_previous=True to include the previous
+    value in the notifications.
+    """
+    __slots__ = ('previous', 'notify', 'observers', 'value')
+
+    def __init__(self, always_notify=False, include_previous=False):
         # These two WeakKeyDictionary objects use the instantiated
         # enclosing object as their key.  If the object goes away, so
         # does its item.
         self.observers = WeakKeyDictionary()
         self.value = WeakKeyDictionary()
         self.notify = always_notify
+        self.previous = include_previous
 
     def _get_value(self, obj):
         return self.value.get(obj, None)
@@ -54,8 +58,11 @@ class Observable(object):
         self.value[obj] = value
         if self.notify or value != old_value:
             # notify the observers
+            value = [value]
+            if self.previous:
+                value.append(old_value)
             for method in self._observer_methods(obj):
-                method(value)
+                method(*value)
 
     @staticmethod
     def _observator(observer, method):
