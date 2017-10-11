@@ -31,6 +31,11 @@ or an instantiated object and the name of the method to call for updating.
 One cannot `register(someclass.foo)`, because the bound method `someclass.foo`
 is ephemeral and goes away immediately.
 
+Note that notifications only occur if the `Observable` itself is set to a
+value.  If one sets the `Observable` to be a list, dict, or other object,
+modifications to said objects will not notify observers; only setting the
+`Observerable` itself to a new value will notify observers.
+
 Example usage:
 ```python
 from observable import Observable
@@ -96,4 +101,16 @@ subject.thing_unregister(observer_function)
 
 subject.thing = 7  # No output will be produced
 print subject.thing  # Output will be the value from the preceding line
+```
+
+Example *incorrect* usage:
+```python
+self.observable = []
+self.obervable.append(somevalue)
+
+self.observable = {}
+self.obesrvable.update({1: 2})
+
+self.observable = MyObject()
+self.observable.attribute = 13
 ```
