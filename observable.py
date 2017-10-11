@@ -25,6 +25,9 @@ from weakref import WeakKeyDictionary
 
 class Observable(object):
     """An implementation of the Observer design pattern
+
+    Instantiate with always_notify=True to notify all observers on all
+    set operations instead of set operations which change the value.
     """
     __slots__ = ('notify', 'observers', 'value')
 
