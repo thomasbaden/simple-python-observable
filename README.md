@@ -8,8 +8,8 @@ one's program; just treat the `Observable` as though it were a normal
 attribute.
 
 The `Observable` may be instantiated with two optional arguments:
-* `always_notify` (default=False)
-* `include_previous` (default=False)
+* `always_notify` (default=`False`)
+* `include_previous` (default=`False`)
 
 The `Observable`'s value starts out as `None`.  An initial value may, of
 course, be set by the enclosing class's `__init__()` method.
