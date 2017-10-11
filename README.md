@@ -34,7 +34,7 @@ is ephemeral and goes away immediately.
 Note that notifications only occur if the `Observable` itself is set to a
 value.  If one sets the `Observable` to be a list, dict, or other object,
 modifications to said objects will not notify observers; only setting the
-`Observerable` itself to a new value will notify observers.
+`Observable` itself to a new value will notify observers.
 
 Example usage:
 ```python
