@@ -48,7 +48,7 @@ class Unregister(Registrar):  # pylint: disable=too-few-public-methods
         instantiated enclosing object and unregister the observer.
     """
     def __call__(self, *args):
-        return self.observable.unregister_observer(self.obj, *args)
+        return self.observable.unregister(self.obj, *args)
 
 
 class Observable(object):
@@ -117,6 +117,6 @@ class Observable(object):
         except KeyError:  # We need a new WeakKeyDictionary for obj
             observerdict[obj] = WeakKeyDictionary({observer: method})
 
-    def unregister_observer(self, obj, observer):
+    def unregister(self, obj, observer):
         """ Unregister an observer. """
         self._get_observers(obj).pop(observer, None)
