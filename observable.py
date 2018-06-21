@@ -96,9 +96,10 @@ class Observable(object):
     class Registrar(object):  # pylint: disable=too-few-public-methods
         """ Registrar abstract base class.  Only for subclassing and DRY.
         """
-        __slots__ = ('observable', )
-        def __init__(self, observable):
+        __slots__ = ('observable', 'obj')
+        def __init__(self, observable, obj=None):
             self.observable = observable
+            self.obj = obj
 
     class Register(Registrar):  # pylint: disable=too-few-public-methods
         """ A Registrar non-data descriptor to gain access to the
