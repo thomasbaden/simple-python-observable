@@ -1,8 +1,7 @@
 # simple-python-observable
 A simple python implementation of the Observer design pattern.
 
-This module provides an `Observable` data descriptor class, with `register`
-and `unregister` attributes.  This allows one to easily convert an object
+This module provides `Observable`, `Register`, and `Unregister` data descriptor classes.  This allows one to easily convert an object
 attribute into an `Observable` without necessitating extensive changes to
 one's program; just treat the `Observable` as though it were a normal
 attribute.
@@ -21,11 +20,6 @@ If `include_previous` is true, observers will be called with the previous
 value as the second argument (e.g. `observer.method(new_value, old_value)`),
 instead of just the new value (e.g. `observer.method(new_value)`).
 
-Due to the nature of data descriptors, the `register` and `unregister`
-attributes are inaccessible from instantiated enclosing class objects.
-Thus, it is necessary to set the `Observable`'s `register` and `unregister`
-properties as properties of the enclosing class in the class definition.
-
 The register method accepts either a callable (i.e. an unbound function),
 or an instantiated object and the name of the method to call for updating.
 One cannot `register(someclass.foo)`, because the bound method `someclass.foo`
@@ -38,12 +32,12 @@ modifications to said objects will not notify observers; only setting the
 
 Example usage:
 ```python
-from observable import Observable
+import observable
 
 class Example(object):
-    thing = Observable()
-    thing_register = thing.register
-    thing_unregister = thing.unregister
+    thing = observable.Observable()
+    thing_register = observable.Register(thing)
+    thing_unregister = observable.Unregister(thing)
 
 subject = Example()
 subject.thing = 1  # No output will be produced
