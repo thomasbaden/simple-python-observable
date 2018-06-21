@@ -40,16 +40,16 @@ class Register(Registrar):  # pylint: disable=too-few-public-methods
     """ A Registrar non-data descriptor to gain access to the
         instantiated enclosing object and register the observer.
     """
-    def __call__(self, *args):
-        return self.observable.register(self.obj, *args)
+    def __call__(self, *args, **kwargs):
+        return self.observable.register(self.obj, *args, **kwargs)
 
 
 class Unregister(Registrar):  # pylint: disable=too-few-public-methods
     """ A Registrar non-data descriptor to gain access to the
         instantiated enclosing object and unregister the observer.
     """
-    def __call__(self, *args):
-        return self.observable.unregister(self.obj, *args)
+    def __call__(self, *args, **kwargs):
+        return self.observable.unregister(self.obj, *args, **kwargs)
 
 
 class Observable(object):
