@@ -52,7 +52,7 @@ class Observer(object):
 
 observer = Observer('first')
 
-subject.thing_register(observer, 'notify')  # method name must be a string
+subject.thing_register(observer.notify)  # method name must be a string
 
 subject.thing = 2  # Observer.notify will report receiving the value
 print subject.thing  # Output will be the value from the preceding line
@@ -68,7 +68,7 @@ print subject.thing  # Output will be the value from the preceding line
 
 observer2 = Observer('second')
 
-subject.thing_register(observer2, 'notify')  # method name must be a string
+subject.thing_register(observer2.notify)  # method name must be a string
 
 # Observer.notify and observer_function will report receiving the value
 subject.thing = 4
@@ -85,7 +85,7 @@ del observer
 subject.thing = 5
 print subject.thing  # Output will be the value from the preceding line
 
-subject.thing_unregister(observer2)
+subject.thing_unregister(observer2.notify)
 # observer_function will report receiving the value.  observer2 is not
 # registered, and will not be notified
 subject.thing = 6
