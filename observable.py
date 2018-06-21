@@ -40,7 +40,7 @@ class Register(Registrar):  # pylint: disable=too-few-public-methods
         instantiated enclosing object and register the observer.
     """
     def __call__(self, *args):
-        return self.observable.register_observer(self.obj, *args)
+        return self.observable.register(self.obj, *args)
 
 
 class Unregister(Registrar):  # pylint: disable=too-few-public-methods
@@ -102,7 +102,7 @@ class Observable(object):
         return (_observator(observer, method)
                 for observer, method in observers.items())
 
-    def register_observer(self, obj, observer, method=None):
+    def register(self, obj, observer, method=None):
         """ Register an observer.  If method is None, then the observer
             is a standalone function.  Otherwise, method is the name of
             a method to be found on the referenced observer object.
