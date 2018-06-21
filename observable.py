@@ -19,7 +19,6 @@
         non-data descriptors, which is how we differentiate between
         separate instantiations of the enclosing class.
 """
-from functools import partial
 from weakref import WeakKeyDictionary
 
 
