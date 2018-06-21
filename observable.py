@@ -73,14 +73,14 @@ class Observable(object):
         self.notify = always_notify
         self.previous = include_previous
 
-    def _get_value(self, obj):
+    def get_value(self, obj):
         return self.value.get(obj, None)
 
     def __get__(self, obj, cls):
-        return self if obj is None else self._get_value(obj)
+        return self if obj is None else self.get_value(obj)
 
     def __set__(self, obj, value):
-        old_value = self._get_value(obj)
+        old_value = self.get_value(obj)
         self.value[obj] = value
         if self.notify or value != old_value:
             # notify the observers
