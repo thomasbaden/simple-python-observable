@@ -21,6 +21,8 @@
 """
 from weakref import WeakKeyDictionary
 
+__all__ = ('Observable', 'Register', 'Unregister')
+
 
 class Registrar(object):  # pylint: disable=too-few-public-methods
     """ Registrar abstract base class.  Only for subclassing and DRY.
