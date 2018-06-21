@@ -87,37 +87,58 @@ class Observable(object):
             value = [value]
             if self.previous:
                 value.append(old_value)
-            for method in self._observer_methods(obj):
+            for method in self.observer_methods(obj):
                 method(*value)
 
-    @staticmethod
-    def _observator(observer, method):
-        return observer if method is None else getattr(observer, method)
+    def observer_methods(self, obj):
+        for (key, funcs) in self.get_observers_dict(obj).items():
+            for func in funcs:
+                if key is type(self):  # unbound functions/methods
+                    yield func
+                else:
+                    yield func.__get__(key, type(key))
 
-    def _get_observers(self, obj):
-        return self.observers.get(obj, {})
+    def get_observers_dict(self, obj):
+        try:
+            return self.observers[obj]
+        except KeyError:
+            observer_dict = self.observers[obj] = WeakKeyDictionary()
+            return observer_dict
 
-    def _observer_methods(self, obj):
-        observers = self._get_observers(obj)
-        _observator = self._observator
-        return (_observator(observer, method)
-                for observer, method in observers.items())
+    def get_key_and_func(self, observer):
+        # Bound methods will have a __self__ attribute.
+        # Default to type(self); None can't be the object of a weakref
+        key = getattr(observer, '__self__', type(self))
+        # Get the original unbound function.
+        # This also neatly sidesteps the Python 2/3 variation.
+        func = getattr(observer, '__func__', observer)
+        return (key, func)
 
-    def register(self, obj, observer, method=None):
+    def register(self, obj, observer):
         """ Register an observer.  If method is None, then the observer
             is a standalone function.  Otherwise, method is the name of
             a method to be found on the referenced observer object.
             This also means that there may only be one method per object
             that observes this value.
         """
-        if not callable(self._observator(observer, method)):
+        if not callable(observer):
             raise ValueError('observer is not callable')
-        observerdict = self.observers
+        observer_dict = self.get_observers_dict(obj)
+        (key, func) = self.get_key_and_func(observer)
         try:
-            observerdict[obj][observer] = method
+            observer_dict[key].add(func)
         except KeyError:  # We need a new WeakKeyDictionary for obj
-            observerdict[obj] = WeakKeyDictionary({observer: method})
+            observer_dict[key] = set([func])
 
     def unregister(self, obj, observer):
         """ Unregister an observer. """
-        self._get_observers(obj).pop(observer, None)
+        observer_dict = self.get_observers_dict(obj)
+        (key, func) = self.get_key_and_func(observer)
+        try:
+            key_observer = observer_dict[key]
+        except KeyError:
+            pass
+        else:
+            key_observer.discard(func)
+            if not key_observer:  # Empty set?
+                del observer_dict[key]
