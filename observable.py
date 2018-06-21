@@ -48,11 +48,7 @@ class Observable(object):
         return self.value.get(obj, None)
 
     def __get__(self, obj, cls):
-        if obj is None:
-            # Referenced from an uninstantiated class definition. This
-            # is how we access the register and unregister properties.
-            return self
-        return self._get_value(obj)
+        return self if obj is None else self._get_value(obj)
 
     def __set__(self, obj, value):
         old_value = self._get_value(obj)
