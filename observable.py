@@ -3,8 +3,8 @@
     Usage:
         class Example(etc):
             thing = Observable()
-            thing_register = thing.register
-            thing_unregister = thing.unregister
+            thing_register = Register(thing)
+            thing_unregister = Unregister(thing)
         sample = Example()
         sample.thing_register(function)
         sample.thing_register(someclass, 'foo')
@@ -21,6 +21,34 @@
 """
 from functools import partial
 from weakref import WeakKeyDictionary
+
+
+class Registrar(object):  # pylint: disable=too-few-public-methods
+    """ Registrar abstract base class.  Only for subclassing and DRY.
+    """
+    __slots__ = ('observable', 'obj')
+    def __init__(self, observable, obj=None):
+        self.observable = observable
+        self.obj = obj
+
+    def __get__(self, obj, _cls):
+        return self if obj is None else type(self)(self.observable, obj)
+
+
+class Register(Registrar):  # pylint: disable=too-few-public-methods
+    """ A Registrar non-data descriptor to gain access to the
+        instantiated enclosing object and register the observer.
+    """
+    def __call__(self, *args):
+        return self.observable.register_observer(self.obj, *args)
+
+
+class Unregister(Registrar):  # pylint: disable=too-few-public-methods
+    """ A Registrar non-data descriptor to gain access to the
+        instantiated enclosing object and unregister the observer.
+    """
+    def __call__(self, *args):
+        return self.observable.unregister_observer(self.obj, *args)
 
 
 class Observable(object):
@@ -92,42 +120,3 @@ class Observable(object):
     def unregister_observer(self, obj, observer):
         """ Unregister an observer. """
         self._get_observers(obj).pop(observer, None)
-
-    class Registrar(object):  # pylint: disable=too-few-public-methods
-        """ Registrar abstract base class.  Only for subclassing and DRY.
-        """
-        __slots__ = ('observable', 'obj')
-        def __init__(self, observable, obj=None):
-            self.observable = observable
-            self.obj = obj
-
-        def __get__(self, obj, _cls):
-            return self if obj is None else type(self)(self.observable, obj)
-
-    class Register(Registrar):  # pylint: disable=too-few-public-methods
-        """ A Registrar non-data descriptor to gain access to the
-            instantiated enclosing object and register the observer.
-        """
-        def __call__(self, *args):
-            return self.observable.register_observer(self.obj, *args)
-
-    class Unregister(Registrar):  # pylint: disable=too-few-public-methods
-        """ A Registrar non-data descriptor to gain access to the
-            instantiated enclosing object and unregister the observer.
-        """
-        def __call__(self, *args):
-            return self.observable.unregister_observer(self.obj, *args)
-
-    @property
-    def register(self):
-        """ Return a Register non-data descriptor linked to this
-            instantiated Observable.
-        """
-        return self.Register(self)
-
-    @property
-    def unregister(self):
-        """ Return a Unregister non-data descriptor linked to this
-            instantiated Observable.
-        """
-        return self.Unregister(self)
