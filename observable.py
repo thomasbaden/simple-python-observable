@@ -101,23 +101,22 @@ class Observable(object):
             self.observable = observable
             self.obj = obj
 
+        def __get__(self, obj, _cls):
+            return self if obj is None else type(self)(self.observable, obj)
+
     class Register(Registrar):  # pylint: disable=too-few-public-methods
         """ A Registrar non-data descriptor to gain access to the
             instantiated enclosing object and register the observer.
         """
-        def __get__(self, obj, _cls):
-            if obj is None:
-                return self
-            return partial(self.observable.register_observer, obj)
+        def __call__(self, *args):
+            return self.observable.register_observer(self.obj, *args)
 
     class Unregister(Registrar):  # pylint: disable=too-few-public-methods
         """ A Registrar non-data descriptor to gain access to the
             instantiated enclosing object and unregister the observer.
         """
-        def __get__(self, obj, _cls):
-            if obj is None:
-                return self
-            return partial(self.observable.unregister_observer, obj)
+        def __call__(self, *args):
+            return self.observable.unregister_observer(self.obj, *args)
 
     @property
     def register(self):
