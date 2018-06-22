@@ -58,6 +58,21 @@ class Unregister(Registrar):  # pylint: disable=too-few-public-methods
         return self.observable.unregister(self.obj, *args, **kwargs)
 
 
+def get_key_and_func(observer):
+    """ Return the bound object and unbound method for the supplied
+        observer
+
+        Unbound methods and functions will return Observable, as
+        None is not a valid value for a WeakKeyDictionary key.
+    """
+    # Bound methods will have a __self__ attribute.
+    key = getattr(observer, '__self__', Observable)
+    # Get the original unbound function.
+    # This also neatly sidesteps the Python 2/3 variation.
+    func = getattr(observer, '__func__', observer)
+    return (key, func)
+
+
 class Observable(object):
     """ An implementation of the Observer design pattern
 
@@ -116,26 +131,12 @@ class Observable(object):
             observer_dict = self.observers[obj] = WeakKeyDictionary()
             return observer_dict
 
-    def get_key_and_func(self, observer):
-        """ Return the bound object and unbound method for the supplied
-            observer
-
-            Unbound methods and functions will return Observable, as
-            None is not a valid value for a WeakKeyDictionary key.
-        """
-        # Bound methods will have a __self__ attribute.
-        key = getattr(observer, '__self__', Observable)
-        # Get the original unbound function.
-        # This also neatly sidesteps the Python 2/3 variation.
-        func = getattr(observer, '__func__', observer)
-        return (key, func)
-
     def register(self, obj, observer):
         """ Register an observer """
         if not callable(observer):
             raise ValueError('observer is not callable')
         observer_dict = self.get_observers_dict(obj)
-        (key, func) = self.get_key_and_func(observer)
+        (key, func) = get_key_and_func(observer)
         try:
             observer_dict[key].add(func)
         except KeyError:  # We need a new WeakKeyDictionary for obj
@@ -144,7 +145,7 @@ class Observable(object):
     def unregister(self, obj, observer):
         """ Unregister an observer """
         observer_dict = self.get_observers_dict(obj)
-        (key, func) = self.get_key_and_func(observer)
+        (key, func) = get_key_and_func(observer)
         try:
             key_observer = observer_dict[key]
         except KeyError:
