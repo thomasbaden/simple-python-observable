@@ -77,7 +77,7 @@ print (subject.thing)  # Output will be the value from the preceding line
 
 observer2 = Observer('second')
 
-subject.thing_register(observer2.notify)  # method name must be a string
+subject.thing_register(observer2.notify)
 
 # Observer.notify and observer_function will report receiving the value
 subject.thing = 4
