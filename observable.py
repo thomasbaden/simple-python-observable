@@ -99,7 +99,7 @@ class Observable(object):
     def observer_methods(self, obj):
         for (key, funcs) in self.get_observers_dict(obj).items():
             for func in funcs:
-                if key is type(self):  # unbound functions/methods
+                if key is Observable:  # unbound functions/methods
                     yield func
                 else:
                     yield func.__get__(key, type(key))
@@ -113,8 +113,7 @@ class Observable(object):
 
     def get_key_and_func(self, observer):
         # Bound methods will have a __self__ attribute.
-        # Default to type(self); None can't be the object of a weakref
-        key = getattr(observer, '__self__', type(self))
+        key = getattr(observer, '__self__', Observable)
         # Get the original unbound function.
         # This also neatly sidesteps the Python 2/3 variation.
         func = getattr(observer, '__func__', observer)
