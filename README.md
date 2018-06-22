@@ -94,7 +94,7 @@ del observer
 subject.thing = 5
 print (subject.thing)  # Output will be the value from the preceding line
 
-subject.thing_unregister(observer2.notify)
+subject.thing_unregister = observer2.notify
 # observer_function will report receiving the value.  observer2 is not
 # registered, and will not be notified
 subject.thing = 6
