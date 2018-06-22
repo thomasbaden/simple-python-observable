@@ -1,12 +1,12 @@
 # simple-python-observable
 A simple python implementation of the Observer design pattern.
 
-This module provides `Observable`, `Register`, and `Unregister` data descriptor classes.  This allows one to easily convert an object
-attribute into an `Observable` without necessitating extensive changes to
-one's program; just treat the `Observable` as though it were a normal
-attribute.
+This module provides `Observable`, `Register` and `Unregister` data descriptor
+classes.  This allows one to easily convert an object attribute into an
+`Observable` without necessitating extensive changes to one's program; just
+treat the `Observable` as though it were a normal attribute.
 
-The `Observable` may be instantiated with two optional arguments:
+The `Observable` class may be instantiated with two optional arguments:
 * `always_notify` (default=`False`)
 * `include_previous` (default=`False`)
 
@@ -16,14 +16,21 @@ course, be set by the enclosing class's `__init__()` method.
 When a value is assigned to the data descriptor object on instantiated
 enclosing class objects, all registered observer methods will be called
 if the value differs from the previous value, or if `always_notify` is true.
+
 If `include_previous` is true, observers will be called with the previous
 value as the second argument (e.g. `observer.method(new_value, old_value)`),
 instead of just the new value (e.g. `observer.method(new_value)`).
 
-The register method accepts either a callable (i.e. an unbound function),
-or an instantiated object and the name of the method to call for updating.
-One cannot `register(someclass.foo)`, because the bound method `someclass.foo`
-is ephemeral and goes away immediately.
+The `register()` and `unregister()` methods accept a callable (e.g. a method
+or a function).  Instance methods will be decomposed for storage, and re-
+instantiated for calling.  Because `Observable` is a data descriptor, these
+methods are not accessible to the instance of enclosing class.
+
+The `Register` and `Unregister` classes take an instantiated `Observable` as
+their `__init__()` argument, and handle binding to the enclosing class's
+instance and calling the `Observable`'s `register()` and `unregister()`
+methods.  Setting a `Register` or `Unregister` instance to a callable is the
+same as calling it to register or unregister the callable.
 
 Note that notifications only occur if the `Observable` itself is set to a
 value.  If one sets the `Observable` to be a list, dict, or other object,
