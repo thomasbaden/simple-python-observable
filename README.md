@@ -30,7 +30,9 @@ The `Register` and `Unregister` classes take an instantiated `Observable` as
 their `__init__()` argument, and handle binding to the enclosing class's
 instance and calling the `Observable`'s `register()` and `unregister()`
 methods.  Setting a `Register` or `Unregister` instance to a callable is the
-same as calling it to register or unregister the callable.
+same as calling it to register or unregister the callable.  Note that this is
+purely a prophylactic measure, to prevent the `Register` and `Unregister`
+instances from becoming inaccessible.
 
 Note that notifications only occur if the `Observable` itself is set to a
 value.  If one sets the `Observable` to be a list, dict, or other object,
