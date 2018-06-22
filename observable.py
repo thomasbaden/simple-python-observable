@@ -80,6 +80,7 @@ class Observable(object):
         self.previous = include_previous
 
     def get_value(self, obj):
+        """ Retrieve the value for the obj instance """
         return self.value.get(obj, None)
 
     def __get__(self, obj, cls):
@@ -97,6 +98,9 @@ class Observable(object):
                 method(*value)
 
     def observer_methods(self, obj):
+        """ Yield a series of callable methods for the registered
+            observers of the supplied obj
+        """
         for (key, funcs) in self.get_observers_dict(obj).items():
             for func in funcs:
                 if key is Observable:  # unbound functions/methods
@@ -105,6 +109,7 @@ class Observable(object):
                     yield func.__get__(key, type(key))
 
     def get_observers_dict(self, obj):
+        """ Retrieve the dict of observers for the supplied obj """
         try:
             return self.observers[obj]
         except KeyError:
@@ -112,6 +117,12 @@ class Observable(object):
             return observer_dict
 
     def get_key_and_func(self, observer):
+        """ Return the bound object and unbound method for the supplied
+            observer
+
+            Unbound methods and functions will return Observable, as
+            None is not a valid value for a WeakKeyDictionary key.
+        """
         # Bound methods will have a __self__ attribute.
         key = getattr(observer, '__self__', Observable)
         # Get the original unbound function.
@@ -120,12 +131,7 @@ class Observable(object):
         return (key, func)
 
     def register(self, obj, observer):
-        """ Register an observer.  If method is None, then the observer
-            is a standalone function.  Otherwise, method is the name of
-            a method to be found on the referenced observer object.
-            This also means that there may only be one method per object
-            that observes this value.
-        """
+        """ Register an observer """
         if not callable(observer):
             raise ValueError('observer is not callable')
         observer_dict = self.get_observers_dict(obj)
@@ -136,7 +142,7 @@ class Observable(object):
             observer_dict[key] = set([func])
 
     def unregister(self, obj, observer):
-        """ Unregister an observer. """
+        """ Unregister an observer """
         observer_dict = self.get_observers_dict(obj)
         (key, func) = self.get_key_and_func(observer)
         try:
